@@ -1,44 +1,44 @@
-import "primeicons/primeicons.css";
-import "primereact/resources/themes/lara-light-indigo/theme.css";
-import "primereact/resources/primereact.css";
-import "primeflex/primeflex.css";
-
 import React, { useState, useEffect, useRef } from "react";
-import { classNames } from "primereact/utils";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Toast } from "primereact/toast";
 import { Button } from "primereact/button";
-import { InputNumber } from "primereact/inputnumber";
-import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
 import "./css/DataTable.css";
 import axios from "axios";
 import Appbar from "./Appbar";
 import { useNavigate } from "react-router-dom";
-import { Dropdown } from 'primereact/dropdown';
+import DialogComp from "./dialogPop";
+import AddProduct from "./addProduct";
+import {
+  GETPRODUCTS,
+  ADDPRODUCTS,
+  UPDATEPRODUCTS,
+  DELETEPRODUCTS,
+} from "./../services/apiUrls";
 
 export default function Products() {
   let emptyProduct = {
     id: null,
     product_name: "",
-      price: 0,
+    price: 0,
     quantity: 0,
     status: "INSTOCK",
-    };
-    
-    const quantityUnitArray = [
-        { unit: 'Kgs', code: 'K' },
-        { unit: 'grams', code: 'G' },
-        { unit: 'liters', code: 'L' },
-        { unit: 'pieces', code: 'P' }];
-    
-     const priceUnitArray = [
-        { unit: '/Kgs', code: 'PK' },
-        { unit: '/grams', code: 'PG' },
-        { unit: '/liters', code: 'PL' },
-        { unit: '/pieces', code: 'PP' }];
+  };
 
+  const quantityUnitArray = [
+    { unit: "Kgs", code: "K" },
+    { unit: "grams", code: "G" },
+    { unit: "liters", code: "L" },
+    { unit: "pieces", code: "P" },
+  ];
+
+  const priceUnitArray = [
+    { unit: "/Kgs", code: "PK" },
+    { unit: "/grams", code: "PG" },
+    { unit: "/liters", code: "PL" },
+    { unit: "/pieces", code: "PP" },
+  ];
 
   const [products, setProducts] = useState(null);
   const [productDialog, setProductDialog] = useState(false);
@@ -50,93 +50,88 @@ export default function Products() {
   const [globalFilter, setGlobalFilter] = useState(null);
   const [loading, setLoading] = useState(false);
   const toast = useRef(null);
-    const dt = useRef(null);
-    const [quantity_unit, setQuantityUnit] = useState(quantityUnitArray[{}]);
-    const [price_unit, setPriceUnit] = useState(priceUnitArray[{}]);
-
+  const dt = useRef(null);
+  const [quantity_unit, setQuantityUnit] = useState(quantityUnitArray[{}]);
+  const [price_unit, setPriceUnit] = useState(priceUnitArray[{}]);
 
   let navigate = useNavigate();
 
-    useEffect(() => {
+  useEffect(() => {
     if (!localStorage.getItem("token")) {
-      navigate('/')
+      navigate("/");
     }
     setLoading(true);
-        getProducts();
+    getProducts();
     setLoading(false);
   }, []);
 
   const getProducts = () => {
-    axios.get("http://localhost:9000/product/all").then((response) => {
+    axios.get(GETPRODUCTS).then((response) => {
       setProducts(response.data.products);
     });
   };
 
-    const saveProduct = () => {
+  const saveProduct = () => {
     setSubmitted(true);
     if (product.product_name.trim()) {
       let _product = { ...product };
       if (product.id) {
-        axios.put("http://localhost:9000/product/update/" + product.id, _product).then(
-          () => { 
-            toast.current.show({
-              severity: "success",
-              summary: "Successful",
-              detail: "Product Updated",
-              life: 3000,
-            });
-            getProducts();
-          }
-        )
-      } else {
-        axios.post("http://localhost:9000/product/add", _product).then(() => { 
+        axios.put(UPDATEPRODUCTS + product.id, _product).then(() => {
           toast.current.show({
-          severity: "success",
-          summary: "Successful",
-          detail: "Product Created",
-          life: 3000,
+            severity: "success",
+            summary: "Successful",
+            detail: "Product Updated",
+            life: 3000,
           });
           getProducts();
-        })
+        });
+      } else {
+        axios.post(ADDPRODUCTS, _product).then(() => {
+          toast.current.show({
+            severity: "success",
+            summary: "Successful",
+            detail: "Product Created",
+            life: 3000,
+          });
+          getProducts();
+        });
       }
       setProductDialog(false);
-      }
+    }
   };
 
   const deleteProduct = () => {
-    axios
-      .delete("http://localhost:9000/product/delete/" + product.id)
-      .then(() => {
-        setDeleteProductDialog(false);
-        toast.current.show({
-          severity: "success",
-          summary: "Successful",
-          detail: "Product Deleted",
-          life: 3000,
-        });
-        getProducts();
+    axios.delete(DELETEPRODUCTS + product.id).then(() => {
+      setDeleteProductDialog(false);
+      toast.current.show({
+        severity: "success",
+        summary: "Successful",
+        detail: "Product Deleted",
+        life: 3000,
       });
+      getProducts();
+    });
   };
 
   const deleteSelectedProducts = () => {
-    let _products = products.filter(val => selectedProducts.includes(val));
+    let _products = products.filter((val) => selectedProducts.includes(val));
     const newArray = _products.map((p) => {
-         return p.id;
-    })
+      return p.id;
+    });
     const selectedIds = {
-    ids: newArray
-    }
-    
-axios
+      ids: newArray,
+    };
+
+    axios
       .post("http://localhost:9000/product/delete/all", selectedIds)
       .then(() => {
-         setDeleteProductsDialog(false);
+        setDeleteProductsDialog(false);
         toast.current.show({
-      severity: "success",
-      summary: "Successful",
-      detail: "Products Deleted",
-      life: 3000,
-    });
+          severity: "success",
+          summary: "Successful",
+          detail: "Products Deleted",
+          life: 3000,
+        });
         getProducts();
       });
   };
@@ -177,7 +172,6 @@ axios
     setDeleteProductDialog(true);
   };
 
-  
   const confirmDeleteSelected = () => {
     setDeleteProductsDialog(true);
   };
@@ -208,25 +202,25 @@ axios
         {rowData.status}
       </span>
     );
-    };
-    
-    const onPriceUnitChange = (e, name) => {
-        setPriceUnit(e.value);
-        const val = e.value.unit || "";
+  };
+
+  const onPriceUnitChange = (e, name) => {
+    setPriceUnit(e.value);
+    const val = e.value.unit || "";
     let _product = { ...product };
     _product[`${name}`] = val;
 
     setProduct(_product);
-    }
+  };
 
-    const onQuantityUnitChange = (e, name) => {
-        setQuantityUnit(e.value);
-        const val = e.value.unit || "";
+  const onQuantityUnitChange = (e, name) => {
+    setQuantityUnit(e.value);
+    const val = e.value.unit || "";
     let _product = { ...product };
     _product[`${name}`] = val;
 
     setProduct(_product);
-    }
+  };
 
   const actionBodyTemplate = (rowData) => {
     return (
@@ -250,20 +244,20 @@ axios
       <h5 className="mx-0 my-1">Manage Products</h5>
       <div>
         <React.Fragment>
-        <Button
-          label="New"
-          icon="pi pi-plus"
-          className="p-button-success mr-2"
-          onClick={openNew}
-        />
-        <Button
-          label="Delete"
-          icon="pi pi-trash"
-          className="p-button-danger"
-          onClick={confirmDeleteSelected}
-          disabled={!selectedProducts || !selectedProducts.length}
-        />
-      </React.Fragment>
+          <Button
+            label="New"
+            icon="pi pi-plus"
+            className="p-button-success mr-2"
+            onClick={openNew}
+          />
+          <Button
+            label="Delete"
+            icon="pi pi-trash"
+            className="p-button-danger"
+            onClick={confirmDeleteSelected}
+            disabled={!selectedProducts || !selectedProducts.length}
+          />
+        </React.Fragment>
       </div>
       <span className="p-input-icon-left">
         <i className="pi pi-search" />
@@ -322,15 +316,16 @@ axios
         onClick={deleteSelectedProducts}
       />
     </React.Fragment>
-    );
-    
+  );
+
   return (
     <div className="datatable-crud-demo">
       <Appbar />
       <Toast ref={toast} />
       <div className="card">
         <DataTable
-          scrollable scrollHeight="400px"
+          scrollable
+          scrollHeight="400px"
           loading={loading}
           ref={dt}
           value={products}
@@ -388,100 +383,38 @@ axios
             body={actionBodyTemplate}
             style={{ minWidth: "8rem" }}
           ></Column>
-          </DataTable>
+        </DataTable>
       </div>
 
-      <Dialog
-        visible={productDialog}
-        style={{ width: "450px" }}
-        header="Product Details"
-        modal
-        className="p-fluid"
-        footer={productDialogFooter}
-        onHide={hideDialog}
-      >
-        <div className="field">
-          <label htmlFor="name">Name</label>
-          <InputText
-            id="product_name"
-            value={product.product_name}
-            onChange={(e) => onInputChange(e, "product_name")}
-            required
-            autoFocus
-            className={classNames({
-              "p-invalid": submitted && !product.product_name,
-            })}
-          />
-          {submitted && !product.product_name && (
-            <small className="p-error">Name is required.</small>
-          )}
-        </div>
+      <AddProduct
+        showDialog={productDialog}
+        confirmDialog={productDialogFooter}
+        closeDialog={hideDialog}
+        product={product}
+        onInputChange={onInputChange}
+        submitted={submitted}
+        onInputNumberChange={onInputNumberChange}
+        onPriceUnitChange={onPriceUnitChange}
+        price_unit={price_unit}
+        priceUnitArray={priceUnitArray}
+        onQuantityUnitChange={onQuantityUnitChange}
+        quantity_unit={quantity_unit}
+        quantityUnitArray={quantityUnitArray}
+      />
 
-        <div className="formgrid grid">
-          <div className="field col">
-            <label htmlFor="price">Price</label>
-            <InputNumber
-              id="price"
-              value={product.price}
-              onValueChange={(e) => onInputNumberChange(e, "price")}
-              mode="currency"
-              currency="INR"
-              locale="hi"
-                      />
-                <Dropdown id="price_unit" value={price_unit} options={priceUnitArray} onChange={(e) => onPriceUnitChange(e, "price_unit")} optionLabel="unit" placeholder="Select unit" />
-          </div>
-          <div className="field col">
-            <label htmlFor="quantity">Quantity</label>
-            <InputNumber
-              id="quantity"
-              value={product.quantity}
-              onValueChange={(e) => onInputNumberChange(e, "quantity")}
-              integeronly
-                      />
-                      <Dropdown id="quantity_unit" value={quantity_unit} options={quantityUnitArray} onChange={(e) => onQuantityUnitChange(e, "quantity_unit")} optionLabel="unit" placeholder="Select unit"/>
-          </div>
-        </div>
-      </Dialog>
+      <DialogComp
+        showDialog={deleteProductDialog}
+        confirmDialog={deleteProductDialogFooter}
+        closeDialog={hideDeleteProductDialog}
+        message={`Are you sure you want to delete ${product.product_name}?`}
+      />
 
-      <Dialog
-        visible={deleteProductDialog}
-        style={{ width: "450px" }}
-        header="Confirm"
-        modal
-        footer={deleteProductDialogFooter}
-        onHide={hideDeleteProductDialog}
-      >
-        <div className="confirmation-content">
-          <i
-            className="pi pi-exclamation-triangle mr-3"
-            style={{ fontSize: "2rem" }}
-          />
-          {product && (
-            <span>
-              Are you sure you want to delete <b>{product.product_name}</b>?
-            </span>
-          )}
-        </div>
-      </Dialog>
-
-      <Dialog
-        visible={deleteProductsDialog}
-        style={{ width: "450px" }}
-        header="Confirm"
-        modal
-        footer={deleteProductsDialogFooter}
-        onHide={hideDeleteProductsDialog}
-      >
-        <div className="confirmation-content">
-          <i
-            className="pi pi-exclamation-triangle mr-3"
-            style={{ fontSize: "2rem" }}
-          />
-          {product && (
-            <span>Are you sure you want to delete the selected products?</span>
-          )}
-        </div>
-      </Dialog>
+      <DialogComp
+        showDialog={deleteProductsDialog}
+        confirmDialog={deleteProductsDialogFooter}
+        closeDialog={hideDeleteProductsDialog}
+        message={`Are you sure you want to delete the selected products?`}
+      />
     </div>
   );
 }
