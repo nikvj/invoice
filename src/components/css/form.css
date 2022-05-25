@@ -1,0 +1,43 @@
+.form-demo{
+    background-color: white;
+    margin-left: 400px;
+    margin-right: 400px;
+    min-height: 450px;
+    margin-top: 50px;
+    vertical-align: middle;
+    align-self: center;
+    border-radius: 15px;
+}
+.form-demo .card {
+    min-width: 450px;
+    align-self: center;
+    margin-top: 50px;
+}
+.form-demo .card form {
+    margin-top: 2rem;
+}
+.form-demo .card .field {
+    margin-bottom: 1.5rem;
+}
+
+.form-demo .card .button-group .button{
+    display: inline-table;
+    margin: 10px;
+}
+
+.form-demo .card .social-login .social-button {
+    align-self: center;
+}
+
+
+@media screen and (max-width: 960px) {
+    .form-demo .card {
+        width: 80%;
+    }
+}
+@media screen and (max-width: 640px) {
+    .form-demo .card {
+        width: 100%;
+        min-width: 0;
+    }
+}
