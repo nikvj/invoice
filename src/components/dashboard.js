@@ -44,8 +44,6 @@ export default function Dashboard() {
     return formatCurrency(rowData.price);
   };
 
-  console.log(selectedProduct);
-
   return (
     <div>
       <Appbar />
@@ -55,7 +53,7 @@ export default function Dashboard() {
             classNamoe="flex align-items-center justify-content-center"
             size={300}
           >
-            <div style={{ padding: "2%", height: "10%" }}>
+            <div style={{ padding: "3%", height: "15%" }}>
               <div className="card">
                 <form className="p-fluid">
                   <div className="field">
@@ -75,7 +73,9 @@ export default function Dashboard() {
                           />
                         )}
                       />
-                      <label htmlFor="code">Code*</label>
+                      <label htmlFor="code">
+                        Product Code<span style={{ color: "red" }}>*</span>
+                      </label>
 
                       <Button
                         type="submit"
@@ -97,30 +97,32 @@ export default function Dashboard() {
                   scrollHeight="400px"
                   value={selectedProduct && selectedProduct}
                   dataKey="id"
-                  paginator
-                  rows={10}
-                  rowsPerPageOptions={[5, 10, 25]}
-                  paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-                  currentPageReportTemplate="Showing {first} to {last} of {totalRecords} products"
                   responsiveLayout="scroll"
                 >
                   <Column
                     field="code"
                     header="Code"
-                    sortable
                     style={{ minWidth: "12rem" }}
                   ></Column>
                   <Column
                     field="product_name"
                     header="Name"
-                    sortable
                     style={{ minWidth: "12rem" }}
                   ></Column>
                   <Column
                     field="price"
                     header="Price"
                     body={priceBodyTemplate}
-                    sortable
+                    style={{ minWidth: "8rem" }}
+                  ></Column>
+                  <Column
+                    field="buying_quantity"
+                    header="Quantity"
+                    style={{ minWidth: "8rem" }}
+                  ></Column>
+                  <Column
+                    field="buying_price"
+                    header="Total"
                     style={{ minWidth: "8rem" }}
                   ></Column>
                 </DataTable>
