@@ -341,11 +341,7 @@ export default function Products() {
           header={header}
           responsiveLayout="scroll"
         >
-          <Column
-            selectionMode="multiple"
-            headerStyle={{ width: "3rem" }}
-            exportable={false}
-          ></Column>
+          <Column selectionMode="multiple" exportable={false}></Column>
           <Column
             field="code"
             header="Code"
@@ -356,7 +352,7 @@ export default function Products() {
             field="product_name"
             header="Name"
             sortable
-            style={{ minWidth: "12rem" }}
+            // style={{ minWidth: "12rem" }}
           ></Column>
           <Column
             field="price"

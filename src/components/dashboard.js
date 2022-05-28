@@ -12,7 +12,7 @@ import { useNavigate } from "react-router-dom";
 
 export default function Dashboard() {
   let navigate = useNavigate();
-  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [selectedProduct, setSelectedProduct] = useState([]);
   const { control, handleSubmit } = useForm(null);
 
   useEffect(() => {
@@ -25,7 +25,11 @@ export default function Dashboard() {
   const handleClick = (e) => {
     e.preventDefault();
     axios.get(SEARCHBYCODE + code).then((response) => {
-      setSelectedProduct(response.data.product);
+      if (response) {
+        const newItem = [...selectedProduct];
+        newItem.push(response.data.product);
+        setSelectedProduct(newItem);
+      }
     });
   };
 
@@ -39,6 +43,8 @@ export default function Dashboard() {
   const priceBodyTemplate = (rowData) => {
     return formatCurrency(rowData.price);
   };
+
+  console.log(selectedProduct);
 
   return (
     <div>
@@ -89,7 +95,7 @@ export default function Dashboard() {
                 <DataTable
                   scrollable
                   scrollHeight="400px"
-                  value={selectedProduct}
+                  value={selectedProduct && selectedProduct}
                   dataKey="id"
                   paginator
                   rows={10}
