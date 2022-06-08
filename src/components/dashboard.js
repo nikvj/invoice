@@ -5,8 +5,10 @@ import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import axios from "axios";
 import { SEARCHBYCODE } from "./../services/apiUrls";
+import { SEARCHCUSTOMERBYCONTACT } from "./../services/apiUrls";
 import { useForm, Controller } from "react-hook-form";
 import { InputText } from "primereact/inputtext";
+import { InputNumber } from "primereact/inputnumber";
 import { Chart } from "primereact/chart";
 import { useNavigate } from "react-router-dom";
 
@@ -16,7 +18,7 @@ export default function Dashboard() {
   const { control, handleSubmit } = useForm(null);
   const [code, setCode] = useState("");
   const [name, setName] = useState("");
-  const [contact, setContact] = useState("");
+  const [contact, setContact] = useState();
 
   useEffect(() => {
     if (!localStorage.getItem("token")) {
@@ -63,8 +65,6 @@ export default function Dashboard() {
     }
   }, [productPrice]);
 
-  console.log(chartColor);
-
   const generateRandomColor = () => {
     let maxVal = 0xffffff; // 16777215
     let randomNumber = Math.random() * maxVal;
@@ -84,7 +84,7 @@ export default function Dashboard() {
     },
   });
 
-  const handleClick = (e) => {
+  const handleCodeClick = (e) => {
     if (e.key === "Enter") {
       e.preventDefault();
       axios.get(SEARCHBYCODE + code).then((response) => {
@@ -96,6 +96,21 @@ export default function Dashboard() {
       });
     }
   };
+
+  const handleContactClick = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      axios.get(SEARCHCUSTOMERBYCONTACT + contact).then((response) => {
+        console.log(response);
+        if (response) {
+          const customerName = response.data.name;
+          setName(customerName);
+        }
+      });
+    }
+  };
+
+  console.log(name);
 
   const formatCurrency = (value) => {
     return value.toLocaleString("hi", {
@@ -179,10 +194,10 @@ export default function Dashboard() {
                           <InputText
                             id={field.code}
                             {...field}
-                            autoFocus
                             value={code}
+                            keyfilter={/[^\s]/}
                             onChange={(e) => setCode(e.target.value)}
-                            onKeyPress={handleClick}
+                            onKeyPress={handleCodeClick}
                             style={{ width: "70%" }}
                           />
                         )}
@@ -198,15 +213,13 @@ export default function Dashboard() {
                       <Controller
                         name="name"
                         control={control}
-                        rules={{ required: "Code is required." }}
+                        rules={{ required: "Name is required." }}
                         render={({ field, fieldState }) => (
                           <InputText
                             id={field.name}
                             {...field}
-                            autoFocus
                             value={name}
                             onChange={(e) => setName(e.target.value)}
-                            onKeyPress={handleClick}
                             style={{ width: "70%" }}
                           />
                         )}
@@ -218,22 +231,23 @@ export default function Dashboard() {
                       style={{ marginLeft: "-30px" }}
                     >
                       <Controller
-                        name="name"
+                        name="contact"
                         control={control}
-                        rules={{ required: "Code is required." }}
+                        rules={{ required: "Contact is required." }}
                         render={({ field, fieldState }) => (
                           <InputText
                             id={field.contact}
                             {...field}
                             autoFocus
                             value={contact}
+                            keyfilter={/[^\s]/}
                             onChange={(e) => setContact(e.target.value)}
-                            onKeyPress={handleClick}
+                            onKeyPress={handleContactClick}
                             style={{ width: "80%" }}
                           />
                         )}
                       />
-                      <label htmlFor="name">
+                      <label htmlFor="contact">
                         Customer Contact<span style={{ color: "red" }}>*</span>
                       </label>
                     </span>
