@@ -7,7 +7,7 @@ import axios from "axios";
 import { SEARCHBYCODE } from "./../services/apiUrls";
 import { useForm, Controller } from "react-hook-form";
 import { InputText } from "primereact/inputtext";
-import { Button } from "primereact/button";
+import { Chart } from "primereact/chart";
 import { useNavigate } from "react-router-dom";
 
 export default function Dashboard() {
@@ -23,6 +23,66 @@ export default function Dashboard() {
       navigate("/");
     }
   }, []);
+
+  const [chartData, setChartData] = useState({});
+  const [productPrice, setProductPrice] = useState([]);
+  const [selectedProductName, setSelectedProductName] = useState([]);
+  const [chartColor, setChartColor] = useState(["#495057"]);
+
+  useEffect(() => {
+    const newProductPrice = [...productPrice];
+    const newSelectedProductName = [...selectedProductName];
+    selectedProduct.map((item, index) => {
+      if (!productPrice.includes(item.price)) {
+        newProductPrice.push(parseInt(item.price));
+      }
+      if (!selectedProductName.includes(item.product_name)) {
+        newSelectedProductName.push(item.product_name);
+      }
+    });
+
+    setProductPrice(newProductPrice);
+    setSelectedProductName(newSelectedProductName);
+  }, [selectedProduct]);
+
+  useEffect(() => {
+    if (productPrice.length > 0 && selectedProductName.length > 0) {
+      const newColor = [...chartColor];
+      newColor.push(generateRandomColor());
+      setChartColor(newColor);
+      setChartData({
+        labels: selectedProductName,
+        datasets: [
+          {
+            data: productPrice,
+            backgroundColor: chartColor,
+            hoverBackgroundColor: chartColor,
+          },
+        ],
+      });
+    }
+  }, [productPrice]);
+
+  console.log(chartColor);
+
+  const generateRandomColor = () => {
+    let maxVal = 0xffffff; // 16777215
+    let randomNumber = Math.random() * maxVal;
+    randomNumber = Math.floor(randomNumber);
+    randomNumber = randomNumber.toString(16);
+    let randColor = randomNumber.padStart(6, 0);
+    return `#${randColor.toUpperCase()}`;
+  };
+
+  const [lightOptions] = useState({
+    plugins: {
+      legend: {
+        labels: {
+          color: "#495057",
+        },
+      },
+    },
+  });
 
   const handleClick = (e) => {
     if (e.key === "Enter") {
@@ -231,7 +291,15 @@ export default function Dashboard() {
               <SplitterPanel
                 className="flex align-items-center justify-content-center"
                 size={100}
-              ></SplitterPanel>
+              >
+                <div>
+                  <Chart
+                    type="doughnut"
+                    data={chartData}
+                    options={lightOptions}
+                  ></Chart>
+                </div>
+              </SplitterPanel>
               <SplitterPanel size={85}>
                 <Splitter>
                   <SplitterPanel
