@@ -5,3 +5,4 @@ export const DELETEPRODUCTS = `${BASEURL}/product/delete/`;
 export const UPDATEPRODUCTS = `${BASEURL}/product/update/`;
 export const SEARCHBYCODE = `${BASEURL}/product/searchByCode/`;
 export const SEARCHCUSTOMERBYCONTACT = `${BASEURL}/customer/customerByContact/`;
+export const GETINVOICEHISTORY = `${BASEURL}/invoiceHistory/all`;

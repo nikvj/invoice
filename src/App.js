@@ -8,6 +8,7 @@ import Login from "./components/login";
 import SignUp from "./components/signup";
 import Dashboard from "./components/dashboard";
 import Products from "./components/products";
+import InvoiceHistory from "./components/invoiceHisory";
 function App() {
   return (
     <Router>
@@ -20,6 +21,7 @@ function App() {
               <Route path="/sign-up" element={<SignUp />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/products" element={<Products />} />
+              <Route path="/invoice-history" element={<InvoiceHistory />} />
             </Routes>
           </div>
         </div>
