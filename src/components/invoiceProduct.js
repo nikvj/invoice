@@ -17,7 +17,7 @@ const InvoiceProduct = (props) => {
         <DataTable
           scrollable
           scrollHeight="400px"
-          value={props.invoiceHistoryProducts}
+          value={props.invoiceHistoryProducts.products}
           dataKey="id"
           paginator
           rows={10}
@@ -27,31 +27,29 @@ const InvoiceProduct = (props) => {
           responsiveLayout="scroll"
         >
           <Column
-            field="invoice_id"
-            header="Invoice Id"
+            field="product.code"
+            header="Code"
             sortable
             style={{ minWidth: "12rem" }}
           ></Column>
-          <Column field="customer.name" header="Customer" sortable></Column>
           <Column
-            field="total_amount"
-            header="Total Amount"
+            field="product.product_name"
+            header="Name"
+            sortable
+            style={{ minWidth: "12rem" }}
+          ></Column>
+          <Column
+            field="product_amount"
+            header="Amount"
             sortable
             style={{ minWidth: "8rem" }}
           ></Column>
-          {/* <Column
-            field="quantity"
+          <Column
+            field="product_quantity"
             header="Quantity"
             sortable
             style={{ minWidth: "8rem" }}
           ></Column>
-          <Column
-            field="status"
-            header="Status"
-            // body={statusBodyTemplate}
-            sortable
-            style={{ minWidth: "12rem" }}
-          ></Column> */}
         </DataTable>
       </Dialog>
     </>

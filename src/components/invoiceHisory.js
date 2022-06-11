@@ -12,37 +12,8 @@ import { GETINVOICEHISTORY } from "./../services/apiUrls";
 import InvoiceProduct from "./invoiceProduct";
 
 export default function InvoiceHistory() {
-  let emptyProduct = {
-    id: null,
-    invoice_id: 0,
-    total_amount: 0,
-    customer: {
-      id: null,
-      name: "",
-      contact: 0,
-    },
-    products: [
-      {
-        id: null,
-        invoice_id: 0,
-        product_quantity: null,
-        product_amount: null,
-        product: {
-          code: "",
-          product_name: "",
-          status: "",
-          quantity: 0,
-          quantity_unit: "",
-          price: 0,
-          price_unit: "",
-          id: null,
-        },
-      },
-    ],
-  };
   const [invoiceHistory, setInvoiceHistory] = useState();
-  const [invoiceHistoryProducts, setInvoiceHistoryProducts] =
-    useState(emptyProduct);
+  const [invoiceHistoryProducts, setInvoiceHistoryProducts] = useState({});
   const [invoiceDialog, setInvoiceDialog] = useState(false);
   const [loading, setLoading] = useState(false);
   const [globalFilter, setGlobalFilter] = useState(null);
@@ -66,6 +37,8 @@ export default function InvoiceHistory() {
     });
   };
 
+  console.log(invoiceHistoryProducts);
+
   const hideDialog = () => {
     setInvoiceDialog(false);
   };
@@ -81,7 +54,7 @@ export default function InvoiceHistory() {
     return formatCurrency(rowData.total_amount);
   };
 
-  const invoiceProduct = (invoiceHistoryProducts) => {
+  const invoiceProduct = (e, invoiceHistoryProducts) => {
     setInvoiceHistoryProducts({ ...invoiceHistoryProducts });
     setInvoiceDialog(true);
   };
@@ -92,7 +65,7 @@ export default function InvoiceHistory() {
         <Button
           icon="pi pi-eye"
           className="p-button-rounded p-button-user mr-2"
-          onClick={() => invoiceProduct(rowData)}
+          onClick={(e) => invoiceProduct(e, rowData)}
         />
       </React.Fragment>
     );
@@ -141,6 +114,12 @@ export default function InvoiceHistory() {
           ></Column>
           <Column field="customer.name" header="Customer" sortable></Column>
           <Column
+            field="customer.contact"
+            header="Contact"
+            sortable
+            style={{ minWidth: "8rem" }}
+          ></Column>
+          <Column
             field="total_amount"
             header="Total Amount"
             body={priceBodyTemplate}
@@ -148,12 +127,6 @@ export default function InvoiceHistory() {
             style={{ minWidth: "8rem" }}
           ></Column>
           {/* <Column
-            field="quantity"
-            header="Quantity"
-            sortable
-            style={{ minWidth: "8rem" }}
-          ></Column>
-          <Column
             field="status"
             header="Status"
             // body={statusBodyTemplate}
