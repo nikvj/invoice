@@ -13,7 +13,7 @@ export default function Appbar() {
   const items = [
     {
       label: "Invoice History",
-      icon: "pi pi-user-edit",
+      icon: "pi pi-history",
       command: () => {
         navigate("/invoice-history");
       },
