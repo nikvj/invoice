@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm, Controller } from "react-hook-form";
@@ -40,9 +39,10 @@ export default function Login() {
       })
       .then((result) => {
         if (result.data.loginStatus === true) {
-           localStorage.setItem("token", result.data.token);
-        navigate("/dashboard");
+          localStorage.setItem("token", result.data.token);
+          navigate("/dashboard");
         } else {
+          alert("Username/Password is incorrect.");
           navigate("/");
         }
       })

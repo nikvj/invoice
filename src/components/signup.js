@@ -45,9 +45,11 @@ export default function SignUp() {
         email: email,
         password: password,
       })
-      .then(() => {
-        alert.apply("Registration Successful!");
-        navigate("/");
+      .then((result) => {
+        if (result.status === 200) {
+          alert("Registration Successful!");
+          navigate("/");
+        }
       });
   };
 
