@@ -8,7 +8,7 @@ import { SEARCHBYCODE } from "./../services/apiUrls";
 import { SEARCHCUSTOMERBYCONTACT } from "./../services/apiUrls";
 import { useForm, Controller } from "react-hook-form";
 import { InputText } from "primereact/inputtext";
-import { InputNumber } from "primereact/inputnumber";
+import { Button } from "primereact/button";
 import { Chart } from "primereact/chart";
 import { useNavigate } from "react-router-dom";
 
@@ -109,8 +109,6 @@ export default function Dashboard() {
       });
     }
   };
-
-  console.log(name);
 
   const formatCurrency = (value) => {
     return value.toLocaleString("hi", {
@@ -257,13 +255,16 @@ export default function Dashboard() {
                   Total Amount: {formatCurrency(amount)}
                 </h3>
               </div>
+              <div style={{ marginTop: 380, marginLeft: 650 }}>
+                <Button label="Checkout" className="p-button-user mr-2" />
+              </div>
             </div>
 
-            <div style={{ height: "80%", marginTop: "4%" }}>
+            <div style={{ marginTop: "4%" }}>
               <div className="card">
                 <DataTable
                   scrollable
-                  scrollHeight="400px"
+                  scrollHeight="300px"
                   value={selectedProduct && selectedProduct}
                   dataKey="id"
                   responsiveLayout="scroll"
